@@ -1,5 +1,6 @@
 """
 "" 19th OCT 2025 ::: Irfan Habeeb Gazi
+"" 28th OCT 2025 ::: Vivek Halder
 ""
 "" Usage: sage Encrypt.py <pub_key> <message>
 ""
@@ -13,11 +14,40 @@
 "" stores the elliptic curve parameters to be used.
 "" 2. <message> : The message (point) to be encrypted. The point should be a valid point on the
 "" elliptic curve defined in the public key file.
+""
+"" <Sample Input / Output>
+""
+"" INPUT 1:
+"" ecc_public_key.txt:-
+"" {
+"" public_key": "(7 : 13*a + 1 : 1)",
+"" generator": "(8 : 16*a + 7 : 1)",
+"" coefficients": "(2, 3, 5, 7, 11)",
+"" field_order": "289",
+"" field_degree": "2"
+"" }
+""
+"" message.txt:-
+"" (12 : 2 : 1)
+""
+"" OUTPUT 1:
+"" ecc_ciphertext.txt:-
+"" {
+"" C1": "(14 : 11*a + 12 : 1)",
+"" C2": "(14*a + 13 : 16*a + 12 : 1)"
+"" }
 """
 
 import sys
 import json
 from sage.all import *
+
+
+USAGE = "sage Encrypt.py <pub_key> <message>"
+if (len(sys.argv) != 3):
+    print("Invalid Arguments!")
+    print(f"\nUsage: {USAGE}")
+    exit(1)
 
 
 def load_json(filename):
