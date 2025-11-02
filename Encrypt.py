@@ -31,7 +31,7 @@ def parse_field(field_order, field_degree):
         return GF(field_order)
     else:
         base_field = Integer(field_order ** (1 / field_degree))
-        return GF(base_field, field_degree)
+        return GF((base_field, field_degree), names=('a',))
 
 
 def parse_coeffs(coeffs_str, K):
