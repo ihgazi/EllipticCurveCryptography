@@ -1,5 +1,6 @@
 """
 "" 20th OCT 2025 ::: Irfan Habeeb Gazi
+"" 29th OCT 2025 ::: Surjayan Kar
 "" 1st NOV 2025 ::: Vivek Halder
 ""
 "" Usage: sage Decrypt.py <priv_key> <pub_key> <ciphertext>

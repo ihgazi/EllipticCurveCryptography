@@ -3,6 +3,7 @@
 """
 "" 18th OCT 2025 ::: Irfan Habeeb Gazi
 "" 29th OCT 2025 ::: Surjayan Kar
+"" 2nd NOV 2025 ::: Vivek Halder
 ""
 "" Usage: sage KeyGenerationUtil.py <Arguments>
 ""
@@ -12,6 +13,32 @@
 ""
 "" The arguments to be provided to the program are the same as those required by KeyGeneration.py
 "" Please refer to the documentation of KeyGeneration.py for more details.
+""
+"" <Sample Input / Output>
+""
+"" INPUT 1:
+"" Mode = 0
+"" Base_Field = 17
+"" Degree = 1
+"" Coeff_a1 = 2
+"" Coeff_a2 = 3
+"" Coeff_a3 = 5
+"" Coeff_a4 = 7
+"" Coeff_a6 = 11
+"" OUTPUT 1:
+"" ecc_private_key.txt:-
+"" {
+"" private_key": "15"
+"" }
+""
+"" ecc_public_key.txt:-
+"" {
+"" public_key": "(15 : 10*a + 3 : 1)",
+"" generator": "(11 : 3*a + 2 : 1)",
+"" coefficients": "(2, 3, 5, 7, 11)",
+"" field_order": "289",
+"" field_degree": "2"
+"" } 
 """
 
 import json
