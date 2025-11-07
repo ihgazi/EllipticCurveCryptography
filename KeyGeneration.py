@@ -34,6 +34,11 @@
 ""    The remaining curve parameters will be generated randomly.
 ""    sage KeyGeneration.py <Mode=3> <Bits>
 ""
+"" The public / private key pair are additionally saved to two seperate files,
+"" ecc_public_key.txt and ecc_private_key.txt in the current working directory in JSON format.
+"" This serves as the persistent store for the generated keys, which can be used in future
+"" for encryption / decryption. Please refer to Encryption.py / Decryption.py for more details.
+""
 "" <Sample Input/Output Sets>
 ""
 "" INPUT 1:-
@@ -188,6 +193,7 @@
 """
 
 from sage.all import *
+import json
 import sys
 
 # Make Field and Elliptic Curve available globally
@@ -431,12 +437,16 @@ def generate_keypair(mode, args):
             die(f"Problem with Arguments!\n{USAGE3}")
         curve_name = args[0]
         K, E, G, q, h = setup_predefined_curve(curve_name)
+        base_field = K.order()
+        degree = 1
         N = q * h
     elif mode == 3:
         if len(args) != 1:
             die(f"Problem with Arguments!\n{USAGE4}")
         bits = int(args[0])
         K, E = setup_curve_with_bits(bits)
+        base_field = K.order()
+        degree = 1
         G, q, h, N = pick_prime_order_generator(E)
     else:
         die("Invalid Mode! Please choose a valid mode (0, 1, 2, or 3)." + f"\n{USAGE1}" + "           OR" + f"\n{
@@ -457,7 +467,30 @@ def generate_keypair(mode, args):
         "generator": G,
         "private_key": sk,
         "public_key": pk,
+        "base_field": base_field,
+        "field_degree": degree,
     }
+
+
+def write_key_files_json(params, pub_filename="ecc_public_key.txt", priv_filename="ecc_private_key.txt"):
+    # Write public key data as JSON
+    coefficients = params['curve'].a_invariants()
+
+    pub_data = {
+        "public_key": str(params['public_key']),
+        "generator": str(params['generator']),
+        "coefficients": str(coefficients),
+        "base_field": str(params['base_field']),
+        "field_degree": str(params['field_degree']),
+    }
+    with open(pub_filename, 'w') as pub_file:
+        json.dump(pub_data, pub_file, indent=2)
+    # Write private key data as JSON
+    priv_data = {
+        "private_key": str(params['private_key'])
+    }
+    with open(priv_filename, 'w') as priv_file:
+        json.dump(priv_data, priv_file, indent=2)
 
 
 def main():
@@ -476,6 +509,8 @@ def main():
     args = sys.argv[2:]
 
     params = generate_keypair(mode, args)
+
+    write_key_files_json(params)
 
     print(f"Field: {params['field']}")
     print(f"Curve: {params['curve']}")

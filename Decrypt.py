@@ -62,11 +62,10 @@ def load_json(filename):
     return data
 
 
-def parse_field(field_order, field_degree):
+def parse_field(base_field, field_degree):
     if field_degree == 1:
         return GF(field_order)
     else:
-        base_field = Integer(field_order ** (1 / field_degree))
         return GF((base_field, field_degree), names=('a',))
 
 
@@ -82,10 +81,22 @@ def parse_point(point_str, E):
     if len(coords) != 3:
         raise ValueError("Invalid point format: " + point_str)
 
-    x = E.base_field()(coords[0])
-    y = E.base_field()(coords[1])
-    z = E.base_field()(coords[2])
-    return E(x, y, z)
+    try:
+        x = E.base_field()(coords[0])
+        y = E.base_field()(coords[1])
+        z = E.base_field()(coords[2])
+    except Exception as ex:
+        raise ValueError(
+            f"Invalid coordinate in point: {point_str}. Error: {ex}")
+
+    try:
+        point = E(x, y, z)
+    except Exception as ex:
+        raise ValueError(
+            f"Failed to construct point on curve: {point_str}. Error: {ex}"
+        )
+
+    return point
 
 
 def parse_private_key(priv_key_str):
@@ -104,14 +115,14 @@ def main():
     pub = load_json(sys.argv[2])
     ciphertext = load_json(sys.argv[3])
 
-    field_order = int(pub['field_order'].strip())
+    base_field = int(pub['base_field'].strip())
     field_degree = int(pub['field_degree'].strip())
     coeffs_str = pub['coefficients']
     coeffs_str = coeffs_str[1:-1].split(',')
     generator_str = pub['generator']
     public_key_str = pub['public_key']
 
-    K = parse_field(field_order, field_degree)
+    K = parse_field(base_field, field_degree)
     coeffs = parse_coeffs(coeffs_str, K)
     E = EllipticCurve(K, coeffs)
     G = parse_point(generator_str, E)
